@@ -1,0 +1,57 @@
+# Project / IO
+paths:
+  project_root: "."                 # resolved at runtime; no hardcoded drive letters
+  results_dir: "Results"
+  generated_masks_dir: "Generated_Masks"
+  load_model: null                  # path to weights or null
+
+# Training
+train:
+  batch_size: 16
+  epochs: 100
+  lr: 1.0e-4
+  optimizer: "Adam"                 # Adam | SGD
+  epochs_patience: 5                # LR reduce patience
+  lr_factor: 0.2
+  max_epochs_stop: 20               # early stopping patience
+  num_folds: 1
+  fold_to_run: [1, 5]               # [] for all folds, or [start, end]
+  test_mask: true                   # compute metrics on test set if masks exist
+
+# Data / normalization
+data:
+  in_channels: 3
+  out_channels: 8                   # multiclass incl. background
+  resize_h: 256
+  resize_w: 256
+  disregard_background: true
+  input_mean: [0.0528, 0.0528, 0.0528]
+  input_std:  [0.1578, 0.1578, 0.1578]
+  palette: [0,0,0,  0,0,255,  255,255,0,  255,0,255,  255,165,0,  192,192,192,  0,0,128,  128,0,128]
+  class_weights: null
+
+# Model
+model:
+  type: "SMP"                       # SMP | ONN_dec | Custom
+  model_to_load: "resnet34*Segformer"
+  model_name: "resnet34_MLP"
+  encoder_depth: 5
+  encoder_weights: "imagenet"       # imagenet | null
+  decoder_attention: null           # null | scse
+  activation: null                  # logits
+
+# Loss
+loss:
+  type: "CrossEntropy"              # CrossEntropy | BCELoss | DiceLoss | SMP_*
+  seg_threshold: 0.5
+
+# ONN (only used if enabled)
+onn:
+  enabled: true
+  q_order: 3
+  max_shift: 0
+
+# UNet custom settings (only if model.type == Custom)
+custom:
+  u_init_features: 32
+  unfolding_decay: 2
